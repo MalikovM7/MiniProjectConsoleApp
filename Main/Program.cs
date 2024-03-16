@@ -1,4 +1,6 @@
 ﻿
+using Azure.Core;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -45,6 +47,11 @@ namespace Turbo.Az.Main
 
 
                 Console.WriteLine("11 - Elan elave ele: ");
+                Console.WriteLine("12 - Elana duzelish ele: ");
+                Console.WriteLine("13 - Elan sil: ");
+                Console.WriteLine("14 - Elani id-nen axtar");
+                Console.WriteLine("15 - Butun elanlari goster");
+
 
                 answer = Helper.ReadInt("Siayhidan secim edin", "Sehv daxil etdiniz");
 
@@ -81,10 +88,21 @@ namespace Turbo.Az.Main
                     case 10:
                         EditModel();
                         break;
-                    //case 11:
-                    //    AddAnouncement();
-                    //    break;
-
+                    case 11:
+                        AddAnouncement();
+                        break;
+                    case 12:
+                        EditAnnouncement();
+                        break;
+                    case 13:
+                        DeleteAnnouncement();
+                        break;
+                    case 14:
+                        GetAnnouncementById();
+                        break;
+                    case 15:
+                        GetAllAnnouncements();
+                        break;
                     default:
                         break;
                 }
@@ -94,148 +112,228 @@ namespace Turbo.Az.Main
 
         }
 
+        public static void GetAllAnnouncements()
+        {
 
-        //    private static void AddAnouncement()
-        //    {
-        //        int modelId;
-        //        double price;
-        //        int march;
-        //        int fuelTypeNum;
-        //        int gearBoxNum;
-        //        int transmissionNum;
-        //        int bannerNum;
+            if (db.CarAnnouncements.Any())
+            {
+                foreach (var item in db.CarAnnouncements)
+                {
+                    Console.WriteLine($"Info : Id-{item.Id}, Banner-{item.Banner} Yurush - {item.March} " +
+                     $" Suretler qutusu novu - {item.GearBox} Fuel Type - {item.FuelType} Modeli - {item.ModelId}" +
+                     $"Marka - {item.ModelId}  Qiymeti - {item.Price} Oturucu novu - {item.Transmission}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Elan siyahisi boshdu ! \n");
+            }
 
-        //        var query = from m in db.Models
-        //                    join b in db.Brands on m.BrandId equals b.Id
-        //                    select new
-        //                    {
-        //                        m.Id,
-        //                        m.Name,
-        //                        m.BrandId,
-        //                        BrandName = b.Name
-        //                    };
-
-        //        Console.WriteLine("Elan yaratmaq ucun Modellerden birini secin");
-
-        //        foreach (var item in query)
-        //        {
-        //            Console.WriteLine($"Id - {item.Id} Adi - {item.Name}  Marka - {item.BrandName}");
-        //        }
-        //    l1:
-        //        modelId = Helper.ReadInt("Modelin Id-sini daxil edin", "Sehv daxil etdiniz");
-        //        var model = query.FirstOrDefault(m => m.Id == modelId);
-        //        if (model == null)
-        //        {
-        //            Console.WriteLine("Secdiyiniz Id-ile model yoxdur !");
-        //            goto l1;
-        //        }
-
-        //    l2:
-        //        price = Helper.ReadDouble("Qiymeti daxil edin", "Sehv daxil etdiniz!");
-        //        if (price < 300)
-        //        {
-        //            Console.WriteLine("Daxil etdiyiniz giymet minimumdan balacadi!");
-        //            goto l2;
-        //        }
-        //    l3:
-        //        march = Helper.ReadInt("Avtomobilin yurushunu daxil edin!", "Sehv daxil etdiniz!");
-        //        if (march < 0)
-        //        {
-        //            Console.WriteLine("Yurush 0-dan balaca ola bilmez!");
-        //            goto l3;
-        //        }
+            db.SaveChanges();
 
 
-        //        foreach (var item in Enum.GetValues(typeof(FuelType)))
-        //        {
-        //            Console.WriteLine($"{(int)item}-{item}");
-        //        }
-        //        FuelType fuelType;
-        //    l4:
-        //        fuelTypeNum = Helper.ReadInt("FuelType Secin:", "Sehv daxil etdiniz!");
-
-        //        if (Enum.IsDefined(typeof(FuelType), fuelTypeNum))
-        //        {
-        //            fuelType = (FuelType)fuelTypeNum;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
-        //            goto l4;
-        //        }
-
-        //        GearBox gearBox;
-        //    l5:
-        //        foreach (var item in Enum.GetValues(typeof(GearBox)))
-        //        {
-        //            Console.WriteLine($"{(int)item}-{item}");
-        //        }
-        //        gearBoxNum = Helper.ReadInt("Suretler qutusunu Secin:", "Sehv daxil etdiniz!");
-
-        //        if (Enum.IsDefined(typeof(GearBox), gearBoxNum))
-        //        {
-        //            gearBox = (GearBox)gearBoxNum;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
-        //            goto l5;
-        //        }
-
-        //        Transmission transmission;
-        //        foreach (var item in Enum.GetValues(typeof(Transmission)))
-        //        {
-        //            Console.WriteLine($"{(int)item}-{item}");
-        //        }
-        //    l6:
-        //        transmissionNum = Helper.ReadInt("Oturucunu Secin:", "Sehv daxil etdiniz!");
-
-        //        if (Enum.IsDefined(typeof(Transmission), transmissionNum))
-        //        {
-        //            transmission = (Transmission)transmissionNum;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
-        //            goto l6;
-        //        }
-        //    l7:
-        //        BanType banner;
-        //        foreach (var item in Enum.GetValues(typeof(BanType)))
-        //        {
-        //            Console.WriteLine($"{(int)item}-{item}");
-        //        }
-
-        //        bannerNum = Helper.ReadInt("Ban novunu Secin:", "Sehv daxil etdiniz!");
-
-        //        if (Enum.IsDefined(typeof(BanType), bannerNum))
-        //        {
-        //            banner = (BanType)bannerNum;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
-        //            goto l7;
-        //        }
-
-        //        CarAnnouncement announcement = new CarAnnouncement();
-        //        announcement.Banner = banner;
-        //        announcement.Transmission = transmission;
-        //        announcement.Price = price;
-        //        announcement.GearBox = gearBox;
-        //        announcement.FuelType = fuelType;
-        //        announcement.March = march;
-        //        announcement.ModelId= modelId;
-
-        //        db.CarAnnouncements.Add(announcement);
 
 
-        //        Console.WriteLine("Yeni elan elave edildi !");
-        //        Console.WriteLine($"Info : Id-{announcement.Id}, Banner-{announcement.Banner} Yurush - {announcement.March} " +
-        //            $" Suretler qutusu novu - {announcement.GearBox} Fuel Type - {announcement.FuelType} Modeli - {announcement.ModelId}" +
-        //            $"Marka - {model.Name}  Qiymeti - {announcement.Price} Oturucu novu - {announcement.Transmission}");
-        //        Console.Clear();
-        //    }
+        }
+
+        public static void GetAnnouncementById()
+        {
+            int announcementId;
+
+           
+        l1:
+            announcementId = Helper.ReadInt("Tapmaq istediyiniz Elanin Id-sini daxil edin", "Sehv daxil etdiniz");
+
+            var announcement = db.CarAnnouncements.FirstOrDefault(x => x.Id == announcementId);
+            if (announcement == null)
+            {
+                Console.WriteLine("Bu Id-ile elan tapilmadi!");
+                goto l1;
+            }
+            Console.WriteLine($"Info : Id-{announcement.Id}, Banner-{announcement.Banner} Yurush - {announcement.March} " +
+                      $" Suretler qutusu novu - {announcement.GearBox} Fuel Type - {announcement.FuelType} Modeli - {announcement.ModelId}" +
+                      $"Marka - {announcement.ModelId}  Qiymeti - {announcement.Price} Oturucu novu - {announcement.Transmission}");
+
+            db.SaveChanges();
+            Console.WriteLine("\n");
+        }
+
+        private static void EditAnnouncement()
+        {
+
+
+
+
+        }
+
+        private static void DeleteAnnouncement() {
+
+            if (!db.CarAnnouncements.Any())
+            {
+                Console.WriteLine("Elan yoxdu !");
+                return;
+            }
+        l1:
+            int AnnouncementId = Helper.ReadInt("Elanin Id-sini daxil edin", "Sehv daxil etdiniz");
+            var announcement = db.CarAnnouncements.FirstOrDefault(m => m.Id == AnnouncementId);
+            if (announcement is null)
+            {
+                Console.WriteLine($"{AnnouncementId}-li marka tapilmadi");
+                goto l1;
+            }
+
+            db.CarAnnouncements.Remove(announcement);
+            db.SaveChanges();
+            Console.WriteLine("Silindi ! \n");
+
+
+
+
+        }
+
+        private static void AddAnouncement()
+        {
+            int modelId;
+            double price;
+            int march;
+            int fuelTypeNum;
+            int gearBoxNum;
+            int transmissionNum;
+            int bannerNum;
+
+            var query = from m in db.Models
+                        join b in db.Brands on m.BrandId equals b.Id
+                        select new
+                        {
+                            m.Id,
+                            m.Name,
+                            m.BrandId,
+                            BrandName = b.Name
+                        };
+
+            Console.WriteLine("Elan yaratmaq ucun Modellerden birini secin");
+
+            foreach (var item in query.ToList())
+            {
+                Console.WriteLine($"Id - {item.Id} Adi - {item.Name}  Marka - {item.BrandName}");
+            }
+        l1:
+            modelId = Helper.ReadInt("Modelin Id-sini daxil edin", "Sehv daxil etdiniz");
+            var model = query.FirstOrDefault(m => m.Id == modelId);
+            if (model == null)
+            {
+                Console.WriteLine("Secdiyiniz Id-ile model yoxdur !");
+                goto l1;
+            }
+
+        l2:
+            price = Helper.ReadDouble("Qiymeti daxil edin", "Sehv daxil etdiniz!");
+            if (price < 300)
+            {
+                Console.WriteLine("Daxil etdiyiniz giymet minimumdan balacadi!");
+                goto l2;
+            }
+        l3:
+            march = Helper.ReadInt("Avtomobilin yurushunu daxil edin!", "Sehv daxil etdiniz!");
+            if (march < 0)
+            {
+                Console.WriteLine("Yurush 0-dan balaca ola bilmez!");
+                goto l3;
+            }
+
+
+            foreach (var item in Enum.GetValues(typeof(FuelType)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+            FuelType fuelType;
+        l4:
+            fuelTypeNum = Helper.ReadInt("FuelType Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(FuelType), fuelTypeNum))
+            {
+                fuelType = (FuelType)fuelTypeNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l4;
+            }
+
+            GearBox gearBox;
+        l5:
+            foreach (var item in Enum.GetValues(typeof(GearBox)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+            gearBoxNum = Helper.ReadInt("Suretler qutusunu Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(GearBox), gearBoxNum))
+            {
+                gearBox = (GearBox)gearBoxNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l5;
+            }
+
+            Transmission transmission;
+            foreach (var item in Enum.GetValues(typeof(Transmission)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+        l6:
+            transmissionNum = Helper.ReadInt("Oturucunu Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(Transmission), transmissionNum))
+            {
+                transmission = (Transmission)transmissionNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l6;
+            }
+        l7:
+            BanType banner;
+            foreach (var item in Enum.GetValues(typeof(BanType)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+
+            bannerNum = Helper.ReadInt("Ban novunu Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(BanType), bannerNum))
+            {
+                banner = (BanType)bannerNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l7;
+            }
+
+            CarAnnouncement announcement = new CarAnnouncement();
+      
+            announcement.Banner = banner;
+            announcement.Transmission = transmission;
+            announcement.Price = price;
+            announcement.GearBox = gearBox;
+            announcement.FuelType = fuelType;
+            announcement.March = march;
+            announcement.ModelId = modelId;
+            announcement.CreatedAt = DateTime.Now;
+            announcement.CreatedBy = 1;
+            db.CarAnnouncements.Add(announcement);
+            db.SaveChanges();
+
+            Console.WriteLine("Yeni elan elave edildi !");
+            Console.WriteLine($"Info : Id-{announcement.Id}, Banner-{announcement.Banner} Yurush - {announcement.March} " +
+                $" Suretler qutusu novu - {announcement.GearBox} Fuel Type - {announcement.FuelType} Modeli - {announcement.ModelId}" +
+                $"Marka - {model.Name}  Qiymeti - {announcement.Price} Oturucu novu - {announcement.Transmission}");
+    
+        }
 
         private static void EditModel()
         {
