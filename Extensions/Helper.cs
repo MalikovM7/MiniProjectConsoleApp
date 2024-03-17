@@ -14,11 +14,11 @@ namespace Turbo.Az.Extensions
             var backupBgColor = Console.BackgroundColor;
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.BackgroundColor = ConsoleColor.White;
+      
             Console.WriteLine(message);
 
             Console.ForegroundColor = backupColor;
-            Console.BackgroundColor = backupBgColor;
+    
         }
 
         public static int ReadInt(string caption, string errorMessage)

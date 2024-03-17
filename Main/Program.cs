@@ -22,7 +22,7 @@ namespace Turbo.Az.Main
    
         static void Main(string[] args)
         {
-
+ 
             Helper.Print("Welcome to Turbo.Az!");
         l1:
             Enum menuOption = Helper.ChooseOption<MenuOptions>("Choose an Option: ");
@@ -106,6 +106,7 @@ namespace Turbo.Az.Main
                    
                     goto l1;
                 case MenuOptions.SearchBrandById:
+                    Console.Clear();
                     GetMarkaById();
                     Console.ReadKey();
                    
@@ -187,6 +188,13 @@ namespace Turbo.Az.Main
                             c.Transmission
                            
                         };
+
+            foreach (var item in query)
+            {
+                Console.WriteLine($"Id- {item.Id}");
+            }
+
+
         l1:
             announcementId = Helper.ReadInt("Tapmaq istediyiniz Elanin Id-sini daxil edin", "Sehv daxil etdiniz");
 
@@ -642,6 +650,13 @@ namespace Turbo.Az.Main
                             m.BrandId,
                             BrandName = b.Name
                         };
+
+            foreach (var item in query)
+            {
+                Console.WriteLine($"Id- {item.Id}");
+            }
+
+
         l1:
             modelId = Helper.ReadInt("Tapmaq istediyiniz Modelin Id-sini daxil edin", "Sehv daxil etdiniz");
 
@@ -778,11 +793,12 @@ namespace Turbo.Az.Main
 
         private static void GetMarkaById()
         {
-            int markaId = Helper.ReadInt("Markanin Id-sini daxil edin", "Sehv daxil etdiniz");
+            int markaId = Helper.ReadInt("Markanin Id-sini daxil edin ", "Sehv daxil etdiniz ");
             var marka = db.Brands.FirstOrDefault(m => m.Id == markaId);
             if (marka is null)
             {
-                Console.WriteLine($"{markaId}-li marka tapilmadi");
+                Console.WriteLine($"{markaId}-li marka tapilmadi ");
+                return;
             }
 
             Console.WriteLine($"Id - {marka.Id} Adi - {marka.Name} \n");
