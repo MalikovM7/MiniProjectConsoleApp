@@ -187,7 +187,8 @@ namespace Turbo.Az.Main
                             BrandName= b.Name,
                             c.Price,
                             c.Transmission
-                           
+
+
                         };
 
             foreach (var item in query)
