@@ -2,6 +2,7 @@
 using Azure.Core;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Diagnostics;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Turbo.az.Entity;
@@ -10,118 +11,148 @@ using Turbo.Az.Extensions;
 using Turbo.Az.Models.Entities;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
+
 namespace Turbo.Az.Main
 {
     internal class Program
     {
 
-
         static AppDbContext db = new AppDbContext();
 
-        static List<Brand> markaList = new();
-        static List<Models.Entities.Model> modelList = new();
-        static List<CarAnnouncement> announcementList = new();
+   
         static void Main(string[] args)
         {
 
-
-
-
-
-
-            int answer;
-            do
+            Helper.Print("Welcome to Turbo.Az!");
+        l1:
+            Enum menuOption = Helper.ChooseOption<MenuOptions>("Choose an Option: ");
+            switch (menuOption)
             {
-                Console.WriteLine("1 - Marka elave ele: ");
-                Console.WriteLine("2 - Marka sil :");
-                Console.WriteLine("3 - Marka hamisin goster: ");
-                Console.WriteLine("4 - Marka Id ile axtar: ");
-                Console.WriteLine("5 - Marka duzelish ele: ");
+                // Car
+                case MenuOptions.AddAd:
+                    Console.Clear();
+                    AddAnnouncement();
+                    Console.ReadKey();
+                    goto l1;
+                case MenuOptions.EditAd:
+                    Console.Clear();
+                    EditAnnouncement();
+                    Console.ReadKey();
+                    goto l1;
+                case MenuOptions.DeleteAd:
+                    Console.Clear();
+                    DeleteAnnouncement();
+                    Console.ReadKey();
+                    goto l1;
+                case MenuOptions.SearchAdById:
+                    Console.Clear();
+                    GetAnnouncementById();
+                    Console.ReadKey();
+                  
+                    goto l1;
+                case MenuOptions.ShowAllAds:
+                    Console.Clear();
+                    GetAllAnnouncements();
+                    Console.ReadKey();
+              
+                    goto l1;
 
 
-                Console.WriteLine("6 - Model elave ele: ");
-                Console.WriteLine("7 - Model sil: ");
-                Console.WriteLine("8 - Butun modelleri goster: ");
-                Console.WriteLine("9 - Model Id ile axtar: ");
-                Console.WriteLine("10 - Modele duzelish ele: ");
+                // Model
+                case MenuOptions.AddModel:
+                    Console.Clear();
+                    AddNewModel();
+               
+                    goto l1;
+                case MenuOptions.EditModel:
+                    Console.Clear();
+                    EditModel();
+                    goto l1;
+                case MenuOptions.DeleteModel:
+                    Console.Clear();
+                    DeleteModel();
+                  
+                    goto l1;
+                case MenuOptions.SearchModelById:
+                    Console.Clear();
+                    GetModelById();
+                    Console.ReadKey();
+                    
+                    goto l1;
+                case MenuOptions.ShowAllModels:
+                    Console.Clear();
+                    GetAllModels();
+                    Console.ReadKey();
+                    
+                    goto l1;
 
 
-                Console.WriteLine("11 - Elan elave ele: ");
-                Console.WriteLine("12 - Elana duzelish ele: ");
-                Console.WriteLine("13 - Elan sil: ");
-                Console.WriteLine("14 - Elani id-nen axtar");
-                Console.WriteLine("15 - Butun elanlari goster");
+                //Brand
 
+                case MenuOptions.AddBrand:
+                    Console.Clear();
+                    AddNewMarka();
+                    db.SaveChanges();
+                    
+                    goto l1;
+                case MenuOptions.EditBrand:
+                    Console.Clear();
+                    EditMarka();
+                    
+                    goto l1;
+                case MenuOptions.DeleteBrand:
+                    Console.Clear();
+                    DeleteMarka();
+                   
+                    goto l1;
+                case MenuOptions.SearchBrandById:
+                    GetMarkaById();
+                    Console.ReadKey();
+                   
+                    goto l1;
+                case MenuOptions.ShowAllBrands:
+                    Console.Clear();
+                    GetAllMarka();
+                    Console.ReadKey();
+                  
+                    goto l1;
 
-                answer = Helper.ReadInt("Siayhidan secim edin", "Sehv daxil etdiniz");
-
-
-                switch (answer)
-                {
-                    case 1:
-                        AddNewMarka();
-                        break;
-                    case 2:
-                        DeleteMarka();
-                        break;
-                    case 3:
-                        GetAllMarka();
-                        break;
-                    case 4:
-                        GetMarkaById();
-                        break;
-                    case 5:
-                        EditMarka();
-                        break;
-                    case 6:
-                        AddNewModel();
-                        break;
-                    case 7:
-                        DeleteModel();
-                        break;
-                    case 8:
-                        GetAllModedls();
-                        break;
-                    case 9:
-                        GetModelById();
-                        break;
-                    case 10:
-                        EditModel();
-                        break;
-                    case 11:
-                        AddAnouncement();
-                        break;
-                    case 12:
-                        EditAnnouncement();
-                        break;
-                    case 13:
-                        DeleteAnnouncement();
-                        break;
-                    case 14:
-                        GetAnnouncementById();
-                        break;
-                    case 15:
-                        GetAllAnnouncements();
-                        break;
-                    default:
-                        break;
-                }
-
-            } while (true);
+                case MenuOptions.Exit:
+                    Console.WriteLine();
+                    Helper.Print("Thanks for using our Program!");
+                    Environment.Exit(0);
+                    break;
+            }
 
 
         }
 
         public static void GetAllAnnouncements()
         {
+            var query = from m in db.Models
+                        join b in db.Brands on m.BrandId equals b.Id
+                        join c in db.CarAnnouncements on m.Id equals c.ModelId
+                        select new
+                        {
+                            c.Id,
+                            c.Banner,
+                            c.March,
+                            c.GearBox,
+                            c.FuelType,
+                            ModelName = m.Name,
+                            BrandName = b.Name,
+                            c.Price,
+                            c.Transmission
 
-            if (db.CarAnnouncements.Any())
+                        };
+
+            if (query.Any())
             {
-                foreach (var item in db.CarAnnouncements)
+                foreach (var item in query)
                 {
                     Console.WriteLine($"Info : Id-{item.Id}, Banner-{item.Banner} Yurush - {item.March} " +
-                     $" Suretler qutusu novu - {item.GearBox} Fuel Type - {item.FuelType} Modeli - {item.ModelId}" +
-                     $"Marka - {item.ModelId}  Qiymeti - {item.Price} Oturucu novu - {item.Transmission}");
+                      $" Suretler qutusu novu - {item.GearBox} Fuel Type - {item.FuelType},  Modeli - {item.ModelName} " +
+                      $" Marka - {item.BrandName}  Qiymeti - {item.Price} Oturucu novu - {item.Transmission}");
                 }
             }
             else
@@ -140,19 +171,34 @@ namespace Turbo.Az.Main
         {
             int announcementId;
 
-           
+            var query = from m in db.Models
+                        join b in db.Brands on m.BrandId equals b.Id
+                        join c in db.CarAnnouncements on m.Id equals c.ModelId
+                        select new
+                        {
+                            c.Id,
+                            c.Banner,
+                            c.March,
+                            c.GearBox,
+                            c.FuelType,
+                            ModelName=m.Name,
+                            BrandName= b.Name,
+                            c.Price,
+                            c.Transmission
+                           
+                        };
         l1:
             announcementId = Helper.ReadInt("Tapmaq istediyiniz Elanin Id-sini daxil edin", "Sehv daxil etdiniz");
 
-            var announcement = db.CarAnnouncements.FirstOrDefault(x => x.Id == announcementId);
+            var announcement = query.FirstOrDefault(x => x.Id == announcementId);
             if (announcement == null)
             {
                 Console.WriteLine("Bu Id-ile elan tapilmadi!");
                 goto l1;
             }
             Console.WriteLine($"Info : Id-{announcement.Id}, Banner-{announcement.Banner} Yurush - {announcement.March} " +
-                      $" Suretler qutusu novu - {announcement.GearBox} Fuel Type - {announcement.FuelType} Modeli - {announcement.ModelId}" +
-                      $"Marka - {announcement.ModelId}  Qiymeti - {announcement.Price} Oturucu novu - {announcement.Transmission}");
+                      $" Suretler qutusu novu - {announcement.GearBox} Fuel Type - {announcement.FuelType},  Modeli - {announcement.ModelName} " +
+                      $" Marka - {announcement.BrandName}  Qiymeti - {announcement.Price} Oturucu novu - {announcement.Transmission}");
 
             db.SaveChanges();
             Console.WriteLine("\n");
@@ -160,19 +206,215 @@ namespace Turbo.Az.Main
 
         private static void EditAnnouncement()
         {
+            var query = from m in db.Models
+                        join b in db.Brands on m.BrandId equals b.Id
+                        join c in db.CarAnnouncements on m.Id equals c.ModelId
+                        select new
+                        {
+                            c.Id,
+                            c.Banner,
+                            c.March,
+                            c.GearBox,
+                            c.FuelType,
+                            ModelName = m.Name,
+                            BrandName = b.Name,
+                            c.Price,
+                            c.Transmission
+
+                        };
+
+            foreach (var item in query.ToList())
+            {
+                Console.WriteLine($"Info : Id-{item.Id}, Banner-{item.Banner} Yurush - {item.March} " +
+                    $" Suretler qutusu novu - {item.GearBox} Fuel Type - {item.FuelType},  Modeli - {item.ModelName} " +
+                    $" Marka - {item.BrandName}  Qiymeti - {item.Price} Oturucu novu - {item.Transmission}");
+
+            }
+        l1:
+            var announcementId = Helper.ReadInt("Duzelish etmek istediyiniz Elanin Id-sini daxil edin !", "Sehv daxil etdiniz");
+            var announcement = db.CarAnnouncements.FirstOrDefault(m => m.Id == announcementId);
+            if (announcement == null)
+            {
+                Console.WriteLine($"{announcementId} - Id li Elan siyahida yoxdur!");
+                goto l1;
+            }
+
+        l2:
+            var price = Helper.ReadDouble("Qiymeti daxil edin", "Sehv daxil etdiniz!");
+            if (price < 300)
+            {
+                Console.WriteLine("Daxil etdiyiniz giymet minimumdan balacadi!");
+                goto l2;
+            }
+
+            int modelId;
 
 
+            foreach (var item in db.Models.ToList())
+            {
+                Console.WriteLine($"Id - {item.Id}, Adi - {item.Name}");
+            }
+
+
+        l3:
+
+
+
+
+            modelId = Helper.ReadInt("Yeni model Id-sini daxil ele", "Sehv daxil etdiniz!");
+            var model = db.Models.FirstOrDefault(m => m.Id == announcementId);
+            if (model == null)
+            {
+                Console.WriteLine($"{modelId} - Id li Model siyahida yoxdur!");
+                goto l2;
+            }
+        l4:
+            var march = Helper.ReadInt("Avtomobilin yurushunu daxil edin!", "Sehv daxil etdiniz!");
+            if (march < 0)
+            {
+                Console.WriteLine("Yurush 0-dan balaca ola bilmez!");
+                goto l3;
+            }
+
+            foreach (var item in Enum.GetValues(typeof(FuelType)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+            FuelType fuelType;
+        l5:
+            var fuelTypeNum = Helper.ReadInt("FuelType Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(FuelType), fuelTypeNum))
+            {
+                fuelType = (FuelType)fuelTypeNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l4;
+            }
+
+            GearBox gearBox;
+        l6:
+            foreach (var item in Enum.GetValues(typeof(GearBox)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+            var gearBoxNum = Helper.ReadInt("Suretler qutusunu Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(GearBox), gearBoxNum))
+            {
+                gearBox = (GearBox)gearBoxNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l5;
+            }
+
+            Transmission transmission;
+            foreach (var item in Enum.GetValues(typeof(Transmission)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+        l7:
+            var transmissionNum = Helper.ReadInt("Oturucunu Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(Transmission), transmissionNum))
+            {
+                transmission = (Transmission)transmissionNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l6;
+            }
+        l8:
+            BanType banner;
+            foreach (var item in Enum.GetValues(typeof(BanType)))
+            {
+                Console.WriteLine($"{(int)item}-{item}");
+            }
+
+            var bannerNum = Helper.ReadInt("Ban novunu Secin:", "Sehv daxil etdiniz!");
+
+            if (Enum.IsDefined(typeof(BanType), bannerNum))
+            {
+                banner = (BanType)bannerNum;
+            }
+            else
+            {
+                Console.WriteLine("Sehv secim etdiniz1 yeniden cehd edin!");
+                goto l7;
+            }
+
+
+            announcement.Banner = banner;
+            announcement.Transmission = transmission;
+            announcement.Price = price;
+            announcement.GearBox = gearBox;
+            announcement.FuelType = fuelType;
+            announcement.March = march;
+            announcement.ModelId = modelId;
+            announcement.LastModifiedAt = DateTime.Now;
+
+            db.SaveChanges();
+
+            foreach (var item in query.ToList())
+            {
+
+                Console.WriteLine($"Info : Id-{item.Id}, Banner-{item.Banner} Yurush - {item.March} " +
+                  $" Suretler qutusu novu - {item.GearBox} Fuel Type - {item.FuelType},  Modeli - {item.ModelName} " +
+                  $" Marka - {item.BrandName}  Qiymeti - {item.Price} Oturucu novu - {item.Transmission}");
+
+
+            }
+
+
+            Console.WriteLine("Deyisiklik edildi ! \n");
 
 
         }
 
         private static void DeleteAnnouncement() {
 
-            if (!db.CarAnnouncements.Any())
+            var query = from m in db.Models
+                        join b in db.Brands on m.BrandId equals b.Id
+                        join c in db.CarAnnouncements on m.Id equals c.ModelId
+                        select new
+                        {
+                            c.Id,
+                            c.Banner,
+                            c.March,
+                            c.GearBox,
+                            c.FuelType,
+                            ModelName = m.Name,
+                            BrandName = b.Name,
+                            c.Price,
+                            c.Transmission
+
+                        };
+
+
+
+
+            if (!query.Any())
             {
                 Console.WriteLine("Elan yoxdu !");
                 return;
             }
+
+            foreach (var item in query.ToList())
+            {
+                Console.WriteLine($"Info : Id-{item.Id}, Banner-{item.Banner} Yurush - {item.March} " +
+                    $" Suretler qutusu novu - {item.GearBox} Fuel Type - {item.FuelType},  Modeli - {item.ModelName} " +
+                    $" Marka - {item.BrandName}  Qiymeti - {item.Price} Oturucu novu - {item.Transmission}");
+
+            }
+
+
+
+
         l1:
             int AnnouncementId = Helper.ReadInt("Elanin Id-sini daxil edin", "Sehv daxil etdiniz");
             var announcement = db.CarAnnouncements.FirstOrDefault(m => m.Id == AnnouncementId);
@@ -191,7 +433,7 @@ namespace Turbo.Az.Main
 
         }
 
-        private static void AddAnouncement()
+        private static void AddAnnouncement()
         {
             int modelId;
             double price;
@@ -371,7 +613,7 @@ namespace Turbo.Az.Main
 
         l2:
             brandId = Helper.ReadInt("Yeni markanin Id-sini daxil ele", "Sehv daxil etdiniz!");
-            Brand brand = db.Brands.FirstOrDefault(m => m.Id == brandId);
+            var brand = db.Brands.FirstOrDefault(m => m.Id == brandId);
             if (brand == null)
             {
                 Console.WriteLine($"{brandId} - Id li Marka siyahida yoxdur!");
@@ -415,7 +657,7 @@ namespace Turbo.Az.Main
 
         }
 
-        private static void GetAllModedls()
+        private static void GetAllModels()
         {
             var query = from m in db.Models
                         join b in db.Brands on m.BrandId equals b.Id
@@ -537,7 +779,7 @@ namespace Turbo.Az.Main
         private static void GetMarkaById()
         {
             int markaId = Helper.ReadInt("Markanin Id-sini daxil edin", "Sehv daxil etdiniz");
-            Brand marka = db.Brands.FirstOrDefault(m => m.Id == markaId);
+            var marka = db.Brands.FirstOrDefault(m => m.Id == markaId);
             if (marka is null)
             {
                 Console.WriteLine($"{markaId}-li marka tapilmadi");
@@ -552,6 +794,16 @@ namespace Turbo.Az.Main
             {
                 Console.WriteLine("Siyahida marka yoxdu !");
                 return;
+            }
+
+
+            foreach (Brand item in db.Brands)
+            {
+
+                Console.WriteLine($"Id- {item.Id}, Name- {item.Name}");
+
+
+
             }
 
         l1:
@@ -615,6 +867,9 @@ namespace Turbo.Az.Main
 
 
         }
+   
+
+
     }
 }
 
