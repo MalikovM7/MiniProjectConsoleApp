@@ -2,6 +2,7 @@
 using Azure.Core;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -151,9 +152,9 @@ namespace Turbo.Az.Main
             {
                 foreach (var item in query)
                 {
-                    Console.WriteLine($"Info : Id-{item.Id}, Banner-{item.Banner} Yurush - {item.March} " +
-                      $" Suretler qutusu novu - {item.GearBox} Fuel Type - {item.FuelType},  Modeli - {item.ModelName} " +
-                      $" Marka - {item.BrandName}  Qiymeti - {item.Price} Oturucu novu - {item.Transmission}");
+                    Console.WriteLine($"Info : Id-{item.Id}\nBanner-{item.Banner}\nYurush - {item.March}\n" +
+                      $"Suretler qutusu novu - {item.GearBox}\nFuel Type - {item.FuelType}\nModeli - {item.ModelName}\n" +
+                      $"Marka - {item.BrandName}\nQiymeti - {item.Price}\nOturucu novu - {item.Transmission}\n");
                 }
             }
             else
@@ -204,9 +205,9 @@ namespace Turbo.Az.Main
                 Console.WriteLine("Bu Id-ile elan tapilmadi!");
                 goto l1;
             }
-            Console.WriteLine($"Info : Id-{announcement.Id}, Banner-{announcement.Banner} Yurush - {announcement.March} " +
-                      $" Suretler qutusu novu - {announcement.GearBox} Fuel Type - {announcement.FuelType},  Modeli - {announcement.ModelName} " +
-                      $" Marka - {announcement.BrandName}  Qiymeti - {announcement.Price} Oturucu novu - {announcement.Transmission}");
+            Console.WriteLine($"Info : Id-{announcement.Id}\n Banner-{announcement.Banner}\nYurush - {announcement.March}\n " +
+                      $" Suretler qutusu novu - {announcement.GearBox}\n Fuel Type - {announcement.FuelType}\nModeli - {announcement.ModelName}\n " +
+                      $" Marka - {announcement.BrandName}\nQiymeti - {announcement.Price}\n Oturucu novu - {announcement.Transmission}\n");
 
             db.SaveChanges();
             Console.WriteLine("\n");
@@ -357,6 +358,7 @@ namespace Turbo.Az.Main
             }
 
 
+            
             announcement.Banner = banner;
             announcement.Transmission = transmission;
             announcement.Price = price;
